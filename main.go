@@ -25,6 +25,8 @@ func main() {
 	if port == "" {
 		port = "3000" // por si estás en local
 	}
+	
+	log.Println("PORT =", port)
 
 	log.Printf("Servidor iniciado en http://localhost:%s", port)
 	log.Fatal(app.Listen(":" + port))
