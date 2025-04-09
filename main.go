@@ -19,15 +19,14 @@ func main() {
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.Render("index", fiber.Map{})
 	})
-	
-    // Usa el puerto asignado por Railway
-    port := os.Getenv("PORT")
-    if port == "" {
-        port = "3000" // por si estás en local
-    }
 
-    app.Listen(":" + port)
-	
+	// Usa el puerto asignado por Railway
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000" // por si estás en local
+	}
+
 	log.Printf("Servidor iniciado en http://localhost:%s", port)
 	log.Fatal(app.Listen(":" + port))
 }
+
