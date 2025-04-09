@@ -13,7 +13,7 @@ func main() {
 
 	app := fiber.New(fiber.Config{
 		Views: engine,
-	})
+	}) 
 
 	// Ruta principal
 	app.Get("/", func(c *fiber.Ctx) error {
