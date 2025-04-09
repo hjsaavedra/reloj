@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-
+	"os"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
 )
@@ -19,7 +19,12 @@ func main() {
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.Render("index", fiber.Map{})
 	})
+	
+    // Usa el puerto asignado por Railway
+    port := os.Getenv("PORT")
+    if port == "" {
+        port = "3000" // por si estás en local
+    }
 
-	log.Println("Servidor iniciado en http://localhost:3000")
-	log.Fatal(app.Listen(":3000"))
+    app.Listen(":" + port)
 }
