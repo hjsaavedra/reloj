@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"log"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
 )
@@ -26,4 +27,7 @@ func main() {
     }
 
     app.Listen(":" + port)
+	
+	log.Printf("Servidor iniciado en http://localhost:%s", port)
+	log.Fatal(app.Listen(":" + port))
 }
