@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calendario Web</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+            font-family: "Segoe UI", sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #111;
+            color: white;
+        }
+
+        .calendar-container {
+            text-align: center;
+        }
+
+        .date {
+            font-size: 10vw;
+            font-weight: bold;
+            margin-bottom: 1vh;
+        }
+
+        .time {
+            font-size: 10vw;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            .date {
+                font-size: 14vw;
+            }
+
+            .time {
+                font-size: 14vw;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="calendar-container">
+        <div class="date" id="current-date">Miércoles 25 de marzo</div>
+        <div class="time" id="current-time">14:30</div>
+    </div>
+
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+            const days = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+            const months = ["enero", "febrero", "marzo", "abril", "mayo", "junio",
+                "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+
+            const dayOfWeek = days[now.getDay()];
+            const day = now.getDate();
+            const month = months[now.getMonth()];
+
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+
+            document.getElementById('current-date').textContent = `${dayOfWeek} ${day} de ${month}`;
+            document.getElementById('current-time').textContent = `${hours}:${minutes}`;
+        }
+
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+    </script>
+</body>
+
+</html>
