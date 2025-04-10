@@ -60,8 +60,8 @@
 
 <body>
     <div class="calendar-container">
-        <div class="date" id="current-date">Miércoles</div>
-        <div class="month" id="current-month">25 de marzo</div>
+        <div class="date" id="current-date">Hoy es Miércoles</div>
+        <div class="month" id="current-month">25 de Marzo</div>
         <div class="time" id="current-time">14:30</div>
     </div>
 
@@ -69,8 +69,8 @@
         function updateDateTime() {
             const now = new Date();
             const days = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
-            const months = ["enero", "febrero", "marzo", "abril", "mayo", "junio",
-                "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+            const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
             const dayOfWeek = days[now.getDay()];
             const day = now.getDate();
@@ -79,7 +79,7 @@
             const hours = now.getHours().toString().padStart(2, '0');
             const minutes = now.getMinutes().toString().padStart(2, '0');
 
-            document.getElementById('current-date').textContent = `${dayOfWeek}`;
+            document.getElementById('current-date').textContent = `Hoy es: ${dayOfWeek}`;
             document.getElementById('current-month').textContent = ` ${day} de ${month}`;
             document.getElementById('current-time').textContent = `${hours}:${minutes}`;
         }
