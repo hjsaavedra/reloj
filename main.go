@@ -6,8 +6,11 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/template/html/v2"
 )
 
@@ -21,9 +24,13 @@ type WeatherResponse struct {
 func getWeather() (*WeatherResponse, error) {
 	// Open-Meteo no requiere API key
 	url := "https://api.open-meteo.com/v1/forecast?latitude=-33.4372&longitude=-70.6506&current=temperature_2m,weather_code"
-	//log.Printf("Haciendo petición a: %s", url)
+	log.Printf("Haciendo petición a: %s", url)
 
-	resp, err := http.Get(url)
+	client := &http.Client{
+		Timeout: 10 * time.Second,
+	}
+
+	resp, err := client.Get(url)
 	if err != nil {
 		log.Printf("Error en la petición HTTP: %v", err)
 		return nil, err
@@ -36,7 +43,7 @@ func getWeather() (*WeatherResponse, error) {
 		return nil, err
 	}
 
-	//log.Printf("Respuesta de la API: %s", string(body))
+	log.Printf("Respuesta de la API: %s", string(body))
 
 	var weather WeatherResponse
 	err = json.Unmarshal(body, &weather)
@@ -89,7 +96,18 @@ func main() {
 
 	app := fiber.New(fiber.Config{
 		Views: engine,
+		// Configuración para producción
+		Prefork:               true,
+		ServerHeader:          "Fiber",
+		AppName:               "Calendario Web",
+		DisableStartupMessage: true,
 	})
+
+	// Middleware CORS
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "*",
+		AllowHeaders: "Origin, Content-Type, Accept",
+	}))
 
 	// Ruta principal
 	app.Get("/", func(c *fiber.Ctx) error {
@@ -103,13 +121,19 @@ func main() {
 		}
 
 		icon := getWeatherIcon(weather.Current.WeatherCode)
-		//log.Printf("Temperatura: %.1f°C, Código del clima: %d", weather.Current.Temperature, weather.Current.WeatherCode)
+		log.Printf("Temperatura: %.1f°C, Código del clima: %d", weather.Current.Temperature, weather.Current.WeatherCode)
 		return c.Render("index", fiber.Map{
 			"Temperature": fmt.Sprintf("%.1f", weather.Current.Temperature),
 			"WeatherIcon": icon,
 		})
 	})
 
-	//log.Println("Servidor iniciado en http://localhost:3000")
-	log.Fatal(app.Listen(":3000"))
+	// Obtener el puerto de la variable de entorno o usar 3000 por defecto
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000"
+	}
+
+	log.Printf("Servidor iniciado en http://0.0.0.0:%s", port)
+	log.Fatal(app.Listen(":" + port))
 }
