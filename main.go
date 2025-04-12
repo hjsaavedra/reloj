@@ -21,7 +21,7 @@ type WeatherResponse struct {
 func getWeather() (*WeatherResponse, error) {
 	// Open-Meteo no requiere API key
 	url := "https://api.open-meteo.com/v1/forecast?latitude=-33.4372&longitude=-70.6506&current=temperature_2m,weather_code"
-	log.Printf("Haciendo petición a: %s", url)
+	//log.Printf("Haciendo petición a: %s", url)
 
 	resp, err := http.Get(url)
 	if err != nil {
@@ -36,7 +36,7 @@ func getWeather() (*WeatherResponse, error) {
 		return nil, err
 	}
 
-	log.Printf("Respuesta de la API: %s", string(body))
+	//log.Printf("Respuesta de la API: %s", string(body))
 
 	var weather WeatherResponse
 	err = json.Unmarshal(body, &weather)
@@ -103,13 +103,13 @@ func main() {
 		}
 
 		icon := getWeatherIcon(weather.Current.WeatherCode)
-		log.Printf("Temperatura: %.1f°C, Código del clima: %d", weather.Current.Temperature, weather.Current.WeatherCode)
+		//log.Printf("Temperatura: %.1f°C, Código del clima: %d", weather.Current.Temperature, weather.Current.WeatherCode)
 		return c.Render("index", fiber.Map{
 			"Temperature": fmt.Sprintf("%.1f", weather.Current.Temperature),
 			"WeatherIcon": icon,
 		})
 	})
 
-	log.Println("Servidor iniciado en http://localhost:3000")
+	//log.Println("Servidor iniciado en http://localhost:3000")
 	log.Fatal(app.Listen(":3000"))
 }
