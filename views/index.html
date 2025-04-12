@@ -14,45 +14,87 @@
 
         html,
         body {
-            height: 100%;
-            width: 100%;
+            height: 100vh;
+            width: 100vw;
             font-family: "Segoe UI", sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             background: #111;
             color: white;
+            overflow: hidden;
         }
 
         .calendar-container {
             text-align: center;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 0 20px;
         }
 
         .date {
-            font-size: 12vw;
+            font-size: calc(100vh * 0.15);
             font-weight: bold;
-            margin-bottom: 1vh;
+            margin-bottom: 2vh;
+            white-space: nowrap;
         }
 
         .month {
-            font-size: 12vw;
+            font-size: calc(100vh * 0.15);
             font-weight: bold;
-            margin-bottom: 1vh;
+            margin-bottom: 2vh;
+            white-space: nowrap;
         }
+
+        .time-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
         .time {
-            font-size: 12vw;
+            font-size: calc(100vh * 0.15);
             font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .weather {
+            font-size: calc(100vh * 0.08);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+        }
+
+        .weather-icon {
+            font-size: calc(100vh * 0.08);
         }
 
         @media (max-width: 600px) {
             .date {
-                font-size: 12vw;
+                font-size: calc(100vh * 0.12);
             }
+
             .month {
-                font-size: 12vw;
+                font-size: calc(100vh * 0.12);
             }
+
             .time {
-                font-size: 12vw;
+                font-size: calc(100vh * 0.12);
+            }
+
+            .weather {
+                font-size: calc(100vh * 0.06);
+            }
+
+            .weather-icon {
+                font-size: calc(100vh * 0.06);
             }
         }
     </style>
@@ -62,10 +104,23 @@
     <div class="calendar-container">
         <div class="date" id="current-date">Hoy es Miércoles</div>
         <div class="month" id="current-month">25 de Marzo</div>
-        <div class="time" id="current-time">14:30</div>
+        <div class="time-container">
+            <div class="time" id="current-time">14:30</div>
+            <div class="weather">
+                <span id="weather-icon" class="weather-icon">{{.WeatherIcon}}</span>
+                <span id="temperature">{{.Temperature}}°C</span>
+            </div>
+        </div>
     </div>
 
     <script>
+        // Solicitar pantalla completa al cargar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            }
+        });
+
         function updateDateTime() {
             const now = new Date();
             const days = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
@@ -84,8 +139,39 @@
             document.getElementById('current-time').textContent = `${hours}:${minutes}`;
         }
 
+        function updateWeather() {
+            fetch('/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la respuesta del servidor');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newWeatherIcon = doc.getElementById('weather-icon').textContent;
+                    const newTemperature = doc.getElementById('temperature').textContent;
+                    
+                    if (newTemperature === 'N/A') {
+                        document.getElementById('temperature').textContent = 'N/A';
+                        document.getElementById('weather-icon').textContent = '❓';
+                    } else {
+                        document.getElementById('weather-icon').textContent = newWeatherIcon;
+                        document.getElementById('temperature').textContent = newTemperature;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error actualizando el clima:', error);
+                    document.getElementById('temperature').textContent = 'N/A';
+                    document.getElementById('weather-icon').textContent = '❓';
+                });
+        }
+
         setInterval(updateDateTime, 1000);
+        setInterval(updateWeather, 3600000); // Actualizar cada hora
         updateDateTime();
+        updateWeather();
     </script>
 </body>
 
