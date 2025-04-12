@@ -41,6 +41,18 @@
       line-height: 1; /* Cero espacio extra arriba o abajo del texto */
       white-space: nowrap;
     }
+
+    .weather {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12vh;
+      margin-top: 2vh;
+    }
+
+    .weather-icon {
+      font-size: 12vh;
+    }
   </style>
 </head>
 
@@ -49,6 +61,10 @@
     <div class="date" id="current-date">Hoy es Miércoles</div>
     <div class="month" id="current-month">25 de Marzo</div>
     <div class="time" id="current-time">14:30</div>
+    <div class="weather">
+      <span id="weather-icon" class="weather-icon">{{.WeatherIcon}}</span>
+      <span id="temperature">{{.Temperature}}°C</span>
+    </div>
   </div>
 
   <script>
@@ -76,8 +92,29 @@
       document.getElementById('current-time').textContent = `${hours}:${minutes}`;
     }
 
+    function updateWeather() {
+      fetch('/')
+        .then(response => response.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          const newWeatherIcon = doc.getElementById('weather-icon').textContent;
+          const newTemperature = doc.getElementById('temperature').textContent;
+          
+          document.getElementById('weather-icon').textContent = newWeatherIcon;
+          document.getElementById('temperature').textContent = newTemperature;
+        })
+        .catch(error => {
+          console.error('Error actualizando el clima:', error);
+          document.getElementById('temperature').textContent = 'N/A';
+          document.getElementById('weather-icon').textContent = '❓';
+        });
+    }
+
     setInterval(updateDateTime, 1000);
+    setInterval(updateWeather, 3600000); // Actualizar cada hora
     updateDateTime();
+    updateWeather();
   </script>
 </body>
 
