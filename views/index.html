@@ -2,142 +2,83 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Calendario Web</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calendario Web</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        html,
-        body {
-            height: 100vh;
-            width: 100vw;
-            font-family: "Segoe UI", sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: #111;
-            color: white;
-            overflow: hidden;
-        }
+    html,
+    body {
+      height: 100vh;
+      width: 100vw;
+      font-family: "Segoe UI", sans-serif;
+      background: #111;
+      color: white;
+      overflow: hidden;
+    }
 
-        .calendar-container {
-            text-align: center;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 0 20px;
-        }
+    .calendar-container {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
 
-        .date {
-            font-size: calc(100vh * 0.15);
-            font-weight: bold;
-            margin-bottom: 2vh;
-            white-space: nowrap;
-        }
-
-        .month {
-            font-size: calc(100vh * 0.15);
-            font-weight: bold;
-            margin-bottom: 2vh;
-            white-space: nowrap;
-        }
-
-        .time-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .time {
-            font-size: calc(100vh * 0.15);
-            font-weight: bold;
-            white-space: nowrap;
-        }
-
-        .weather {
-            font-size: calc(100vh * 0.08);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            white-space: nowrap;
-        }
-
-        .weather-icon {
-            font-size: calc(100vh * 0.08);
-        }
-
-        @media (max-width: 600px) {
-            .date {
-                font-size: calc(100vh * 0.12);
-            }
-
-            .month {
-                font-size: calc(100vh * 0.12);
-            }
-
-            .time {
-                font-size: calc(100vh * 0.12);
-            }
-
-            .weather {
-                font-size: calc(100vh * 0.06);
-            }
-
-            .weather-icon {
-                font-size: calc(100vh * 0.06);
-            }
-        }
-    </style>
+    .date,
+    .month,
+    .time {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24vh; /* Máximo posible sin desbordar */
+      font-weight: bold;
+      line-height: 1; /* Cero espacio extra arriba o abajo del texto */
+      white-space: nowrap;
+    }
+  </style>
 </head>
 
 <body>
-    <div class="calendar-container">
-        <div class="date" id="current-date">Hoy es Miércoles</div>
-        <div class="month" id="current-month">25 de Marzo</div>
-        <div class="time-container">
-            <div class="time" id="current-time">14:30</div>
-        </div>
-    </div>
+  <div class="calendar-container">
+    <div class="date" id="current-date">Hoy es Miércoles</div>
+    <div class="month" id="current-month">25 de Marzo</div>
+    <div class="time" id="current-time">14:30</div>
+  </div>
 
-    <script>
-        // Solicitar pantalla completa al cargar la página
-        document.addEventListener('DOMContentLoaded', () => {
-            if (document.documentElement.requestFullscreen) {
-                document.documentElement.requestFullscreen();
-            }
-        });
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen();
+      }
+    });
 
-        function updateDateTime() {
-            const now = new Date();
-            const days = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
-            const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-                "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+    function updateDateTime() {
+      const now = new Date();
+      const days = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+      const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
-            const dayOfWeek = days[now.getDay()];
-            const day = now.getDate();
-            const month = months[now.getMonth()];
+      const dayOfWeek = days[now.getDay()];
+      const day = now.getDate();
+      const month = months[now.getMonth()];
 
-            const hours = now.getHours().toString().padStart(2, '0');
-            const minutes = now.getMinutes().toString().padStart(2, '0');
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
 
-            document.getElementById('current-date').textContent = `Hoy es ${dayOfWeek}`;
-            document.getElementById('current-month').textContent = ` ${day} de ${month}`;
-            document.getElementById('current-time').textContent = `${hours}:${minutes}`;
-        }
+      document.getElementById('current-date').textContent = `Hoy es ${dayOfWeek}`;
+      document.getElementById('current-month').textContent = `${day} de ${month}`;
+      document.getElementById('current-time').textContent = `${hours}:${minutes}`;
+    }
 
-        setInterval(updateDateTime, 1000);
-        updateDateTime();
-    </script>
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+  </script>
 </body>
 
 </html>
