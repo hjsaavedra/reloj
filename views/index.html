@@ -2,83 +2,166 @@
 <html lang="es">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Calendario Web</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protector de Pantalla</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: color 5s ease, transform 10s ease;
+        }
 
-    html,
-    body {
-      height: 100vh;
-      width: 100vw;
-      font-family: "Segoe UI", sans-serif;
-      background: #111;
-      color: white;
-      overflow: hidden;
-    }
+        .container {
+            text-align: center;
+            width: 95%;
+            max-width: 100%;
+            position: relative;
+            transition: transform 10s ease;
+        }
 
-    .calendar-container {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
+        .text-line {
+            margin: 1vh 0;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            width: 100%;
+            text-align: center;
+            line-height: 1.2;
+            transition: transform 10s ease;
+        }
 
-    .date,
-    .month,
-    .time {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 18vh; /* Máximo posible sin desbordar */
-      font-weight: bold;
-      line-height: 1; /* Cero espacio extra arriba o abajo del texto */
-      white-space: nowrap;
-    }
-  </style>
+        .weather-line {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 3vw;
+            margin-top: 3vh;
+            transition: transform 10s ease;
+        }
+
+        #clima {
+            font-size: inherit;
+        }
+
+        #weather-icon {
+            transition: transform 10s ease;
+        }
+    </style>
 </head>
 
 <body>
-  <div class="calendar-container">
-    <div class="date" id="current-date">Hoy es Miércoles</div>
-    <div class="month" id="current-month">25 de Marzo</div>
-    <div class="time" id="current-time">14:30</div>
-  </div>
+    <div class="container">
+        <div class="text-line" id="hoy">Hoy es {{.Dia}}</div>
+        <div class="text-line" id="fecha">{{.Fecha}}</div>
+        <div class="text-line" id="hora">{{.Hora}} - {{.IconoTemperatura}}</div>
+        <div class="weather-line">
+            <a href="https://www.weatherapi.com/" title="Free Weather API">
+                <img id="weather-icon" src='{{.IconoClima}}' alt="Weather data by WeatherAPI.com" border="0">
+            </a>
+            <span id="clima">{{.Clima}}</span>
+        </div>
+    </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen();
-      }
-    });
+    <script>
+        // Función para ajustar el tamaño del texto
+        function ajustarTexto() {
+            const lineas = document.querySelectorAll('.text-line, .weather-line');
+            const alturaDisponible = window.innerHeight / (lineas.length + 1);
 
-    function updateDateTime() {
-      const now = new Date();
-      const days = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
-      const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+            let fontSize = Math.min(
+                window.innerWidth * 0.08,
+                alturaDisponible * 0.8
+            );
 
-      const dayOfWeek = days[now.getDay()];
-      const day = now.getDate();
-      const month = months[now.getMonth()];
+            lineas.forEach(linea => {
+                linea.style.fontSize = `${fontSize}px`;
+            });
 
-      const hours = now.getHours().toString().padStart(2, '0');
-      const minutes = now.getMinutes().toString().padStart(2, '0');
+            const iconoClima = document.querySelector('.weather-line img');
+            if (iconoClima) {
+                iconoClima.style.height = `${fontSize * 1.5}px`;
+            }
+        }
 
-      document.getElementById('current-date').textContent = `Hoy es ${dayOfWeek}`;
-      document.getElementById('current-month').textContent = `${day} de ${month}`;
-      document.getElementById('current-time').textContent = `${hours}:${minutes}`;
-    }
+        // Función para actualizar la hora cada minuto
+        function actualizarHora() {
+            const ahora = new Date();
+            const segundos = ahora.getSeconds();
+            const milisegundos = ahora.getMilliseconds();
+            const tiempoParaProximoMinuto = (60 - segundos) * 1000 - milisegundos;
 
-    setInterval(updateDateTime, 1000);
-    updateDateTime();
-  </script>
+            setTimeout(() => {
+                location.reload();
+            }, tiempoParaProximoMinuto);
+        }
+
+        // Función para mover el contenido suavemente
+        function moverContenido() {
+            const container = document.querySelector('.container');
+            const maxOffset = 5; // Máximo desplazamiento en porcentaje
+
+            // Generar desplazamientos aleatorios
+            const offsetX = (Math.random() * maxOffset * 2 - maxOffset);
+            const offsetY = (Math.random() * maxOffset * 2 - maxOffset);
+
+            container.style.transform = `translate(${offsetX}%, ${offsetY}%)`;
+
+            // Programar próximo movimiento en 10-15 minutos
+            setTimeout(moverContenido, (10 + Math.random() * 5) * 60 * 1000);
+        }
+
+        // Función para actualizar el clima via AJAX
+        function actualizarClima() {
+            fetch('/api/weather')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.Clima) {
+                        document.getElementById('clima').textContent = data.Clima;
+                        document.getElementById('hora').textContent =
+                            new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }) +
+                            '  -  ' + data.IconoTemperatura;
+
+                        const weatherIcon = document.getElementById('weather-icon');
+                        if (data.IconoClima) {
+                            weatherIcon.src = data.IconoClima;
+                            weatherIcon.style.display = 'inline';
+                        } else {
+                            weatherIcon.style.display = 'none';
+                        }
+                    }
+                })
+                .catch(error => console.error('Error al actualizar clima:', error));
+
+            // Programar próxima actualización en 3 horas
+            setTimeout(actualizarClima, 3 * 60 * 60 * 1000);
+        }
+
+        // Iniciar todo
+        window.onload = function () {
+            ajustarTexto();
+            actualizarHora();
+            moverContenido();
+            actualizarClima();
+
+            // Cambiar ligeramente el color para prevenir burn-in
+            setInterval(() => {
+                const hue = 200 + Math.random() * 20; // Tonos azulados
+                const lightness = 85 + Math.random() * 10;
+                document.body.style.color = `hsl(${hue}, 80%, ${lightness}%)`;
+            }, 5 * 60 * 1000); // Cada 5 minutos
+        };
+
+        // Ajustar cuando cambia el tamaño de la pantalla
+        window.addEventListener('resize', ajustarTexto);
+    </script>
 </body>
 
 </html>
